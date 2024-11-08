@@ -1,0 +1,133 @@
+import Foundation
+
+// UserProfile struct manages user's eco points, rewards, and challenges
+struct UserProfile {
+    var ecoPoints: Int
+    var rewards: [Reward]
+    var challenges: [Challenge]
+    
+    // Initialize with default values or existing data
+    init(ecoPoints: Int = 0, rewards: [Reward] = [], challenges: [Challenge] = []) {
+        self.ecoPoints = ecoPoints
+        self.rewards = rewards
+        self.challenges = challenges
+    }
+}
+
+// Reward struct for defining rewards criteria and redemption
+struct Reward {
+    let name: String
+    let requiredPoints: Int
+    var isRedeemed: Bool
+}
+
+// Challenge struct for defining challenges and tracking completion
+struct Challenge {
+    let description: String
+    let requiredActionCount: Int
+    var currentActionCount: Int = 0
+    var isCompleted: Bool {
+        return currentActionCount >= requiredActionCount
+    }
+    
+    // Function to progress challenge
+    mutating func progress() {
+        if !isCompleted {
+            currentActionCount += 1
+        }
+    }
+}
+
+// Initialize User Profile with sample rewards and challenges
+var userProfile = UserProfile(
+    ecoPoints: 0,
+    rewards: [
+        Reward(name: "10% Car Service Discount", requiredPoints: 100, isRedeemed: false),
+        Reward(name: "Tree Planting Donation", requiredPoints: 200, isRedeemed: false)
+    ],
+    challenges: [
+        Challenge(description: "Complete 5 eco-friendly trips", requiredActionCount: 5),
+        Challenge(description: "Save 50 kg CO2", requiredActionCount: 50)
+    ]
+)
+
+// MARK: - Functions for Managing User Actions, Points, and Challenges
+
+// 1. Track User Actions
+func trackUserAction(actionType: String, value: Int) {
+    // Example action types could be "smoothAcceleration" or "speedLimitAdherence"
+    print("Tracking action: \(actionType) with value: \(value)")
+    userProfile.ecoPoints += calculateEcoPoints(for: [actionType: value])
+    checkChallenges()
+}
+
+// 2. Calculate Eco-Points based on user actions
+func calculateEcoPoints(for actions: [String: Int]) -> Int {
+    var points = 0
+    for (action, value) in actions {
+        switch action {
+        case "smoothAcceleration":
+            points += value * 10
+        case "speedLimitAdherence":
+            points += value * 5
+        default:
+            break
+        }
+    }
+    return points
+}
+
+// 3. Update Progress Bar
+func updateProgressBar(for points: Int) {
+    // Logic for updating progress bar (UI code can be added separately)
+    let progressPercentage = Double(points) / 100.0  // Assuming 100 points for full bar
+    print("Progress Bar: \(progressPercentage * 100)% complete.")
+}
+
+// 4. Check and Complete Challenges
+func checkChallenges() {
+    for index in userProfile.challenges.indices {
+        if !userProfile.challenges[index].isCompleted {
+            userProfile.challenges[index].progress()
+            if userProfile.challenges[index].isCompleted {
+                notifyUser(of: "Challenge completed: \(userProfile.challenges[index].description)")
+            }
+        }
+    }
+}
+
+// 5. Redeem Rewards
+func redeemReward(_ reward: Reward) {
+    guard let rewardIndex = userProfile.rewards.firstIndex(where: { $0.name == reward.name }),
+          !userProfile.rewards[rewardIndex].isRedeemed,
+          userProfile.ecoPoints >= reward.requiredPoints else {
+        print("Not enough points or reward already redeemed.")
+        return
+    }
+    // Deduct points and mark the reward as redeemed
+    userProfile.ecoPoints -= reward.requiredPoints
+    userProfile.rewards[rewardIndex].isRedeemed = true
+    print("Redeemed reward: \(reward.name). Remaining points: \(userProfile.ecoPoints)")
+}
+
+// 6. Notify User of Achievements
+func notifyUser(of achievement: String) {
+    // Placeholder for notification logic
+    print("Notification: \(achievement)")
+}
+
+// 7. Weekly Recap
+func weeklyRecap() -> String {
+    let completedChallenges = userProfile.challenges.filter { $0.isCompleted }
+    return "You earned \(userProfile.ecoPoints) eco-points and completed \(completedChallenges.count) challenges this week!"
+}
+
+// 8. Reset Weekly Challenges
+func resetChallenges() {
+    for index in userProfile.challenges.indices {
+        userProfile.challenges[index].currentActionCount = 0
+    }
+    print("Weekly challenges have been reset.")
+}
+
+
