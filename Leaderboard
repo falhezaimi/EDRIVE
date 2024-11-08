@@ -1,0 +1,64 @@
+Simple Leaderboard example (will change depending on how we input data): 
+import Foundation
+
+
+// User struct represents each user and their score for leaderboard tracking
+struct User {
+    let username: String
+    var ecoPoints: Int
+}
+
+// Leaderboard class to manage ranking and display of users based on eco-points
+class Leaderboard {
+    
+    // Array to store users participating in the leaderboard
+    private var users: [User]
+    
+    // Initialize with a list of users
+    init(users: [User]) {
+        self.users = users
+    }
+    
+    // Function to update a user's eco-points (e.g., after they earn points)
+    func updateUserPoints(for username: String, points: Int) {
+        if let index = users.firstIndex(where: { $0.username == username }) {
+            users[index].ecoPoints = points
+        } else {
+            print("User \(username) not found.")
+        }
+    }
+    
+    // Function to get the leaderboard rankings sorted by eco-points in descending order
+    func getRankings() -> [User] {
+        return users.sorted(by: { $0.ecoPoints > $1.ecoPoints })
+    }
+    
+    // Function to display the leaderboard with rankings
+    func displayLeaderboard() {
+        let rankings = getRankings()
+        print("Leaderboard:")
+        for (index, user) in rankings.enumerated() {
+            print("\(index + 1). \(user.username) - Eco-Points: \(user.ecoPoints)")
+        }
+    }
+}
+
+// Example usage:
+
+// Initialize users with eco-points
+let users = [
+    User(username: "UserA", ecoPoints: 120),
+    User(username: "UserB", ecoPoints: 200),
+    User(username: "UserC", ecoPoints: 150)
+]
+
+// Initialize the leaderboard with the list of users
+let leaderboard = Leaderboard(users: users)
+
+// Display the leaderboard
+leaderboard.displayLeaderboard()
+
+// Update a user's eco-points and refresh the leaderboard
+leaderboard.updateUserPoints(for: "UserA", points: 250)
+leaderboard.displayLeaderboard()
+
