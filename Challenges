@@ -1,0 +1,122 @@
+import Foundation
+
+// Enum to differentiate between Monthly and Weekly Challenges
+enum ChallengeType {
+    case weekly
+    case monthly
+}
+
+// Challenge struct represents a task or goal for earning eco-points
+struct Challenge {
+    let description: String
+    let requiredActionCount: Int       // Total actions required to complete the challenge
+    var currentActionCount: Int = 0    // Current progress towards completing the challenge
+    let type: ChallengeType            // Indicates if it's a weekly or monthly challenge
+    var isCompleted: Bool {
+        return currentActionCount >= requiredActionCount
+    }
+    
+    // Function to progress challenge based on actions completed
+    mutating func progress(by actions: Int) {
+        if !isCompleted {
+            currentActionCount += actions
+        }
+    }
+}
+
+// ChallengeManager handles initialization, progress tracking, and resetting of challenges
+class ChallengeManager {
+    var weeklyChallenges: [Challenge] = []
+    var monthlyChallenges: [Challenge] = []
+    
+    // Initialize with some sample challenges
+    init() {
+        setupDefaultChallenges()
+    }
+    
+    // Function to set up initial challenges
+    private func setupDefaultChallenges() {
+        // Example weekly and monthly challenges
+        weeklyChallenges = [
+            Challenge(description: "Complete 5 eco-friendly trips this week", requiredActionCount: 5, type: .weekly),
+            Challenge(description: "Reduce CO2 emissions by 10 kg this week", requiredActionCount: 10, type: .weekly)
+        ]
+        
+        monthlyChallenges = [
+            Challenge(description: "Drive 100 miles eco-friendly this month", requiredActionCount: 100, type: .monthly),
+            Challenge(description: "Save 50 kg of CO2 this month", requiredActionCount: 50, type: .monthly)
+        ]
+    }
+    
+    // Function to track progress towards a specific challenge type
+    func trackProgress(for type: ChallengeType, actions: Int) {
+        switch type {
+        case .weekly:
+            for index in weeklyChallenges.indices {
+                if !weeklyChallenges[index].isCompleted {
+                    weeklyChallenges[index].progress(by: actions)
+                }
+            }
+        case .monthly:
+            for index in monthlyChallenges.indices {
+                if !monthlyChallenges[index].isCompleted {
+                    monthlyChallenges[index].progress(by: actions)
+                }
+            }
+        }
+    }
+    
+    // Function to check and notify completed challenges
+    func checkCompletedChallenges() {
+        for challenge in weeklyChallenges where challenge.isCompleted {
+            print("Weekly Challenge Completed: \(challenge.description)")
+        }
+        
+        for challenge in monthlyChallenges where challenge.isCompleted {
+            print("Monthly Challenge Completed: \(challenge.description)")
+        }
+    }
+    
+    // Reset all weekly challenges (e.g., at the start of a new week)
+    func resetWeeklyChallenges() {
+        for index in weeklyChallenges.indices {
+            weeklyChallenges[index].currentActionCount = 0
+        }
+        print("Weekly challenges have been reset.")
+    }
+    
+    // Reset all monthly challenges (e.g., at the start of a new month)
+    func resetMonthlyChallenges() {
+        for index in monthlyChallenges.indices {
+            monthlyChallenges[index].currentActionCount = 0
+        }
+        print("Monthly challenges have been reset.")
+    }
+}
+
+// UserProfile struct includes eco-points and a reference to ChallengeManager
+struct UserProfile {
+    var ecoPoints: Int
+    var challengeManager: ChallengeManager
+    
+    init(ecoPoints: Int = 0) {
+        self.ecoPoints = ecoPoints
+        self.challengeManager = ChallengeManager()
+    }
+}
+
+// Example usage:
+var userProfile = UserProfile()
+
+// Simulate tracking user actions for a weekly challenge
+userProfile.challengeManager.trackProgress(for: .weekly, actions: 3)
+userProfile.challengeManager.trackProgress(for: .monthly, actions: 10)
+userProfile.challengeManager.checkCompletedChallenges()
+
+// Reset weekly and monthly challenges at appropriate intervals
+userProfile.challengeManager.resetWeeklyChallenges()
+userProfile.challengeManager.resetMonthlyChallenges()
+
+
+
+
