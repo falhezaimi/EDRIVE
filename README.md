@@ -24,7 +24,7 @@ Key Features:
 Purpose: Develops the app’s navigation system.
 Key Features:
 -Provides real-time navigation functionality.
-\n Suggests eco-friendly routes to minimize carbon emissions.
+-Suggests eco-friendly routes to minimize carbon emissions.
 
 //driving-behavior
 Purpose: Focuses on analyzing user driving habits.
