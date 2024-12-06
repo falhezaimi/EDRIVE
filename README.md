@@ -1,4 +1,4 @@
-EDRIVE 🚗🌿
+EDRIVE
 A Carbon Emissions Tracking and Sustainable Driving iOS Application
 
 Overview
